@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using KeycloakIntegration.Domain.External.Keycloak;
+using KeycloakIntegration.Infra.External.Keycloak;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace KeycloakIntegration.Infra
 {
@@ -6,6 +8,7 @@ namespace KeycloakIntegration.Infra
     {
         public static IServiceCollection AddInfra(this IServiceCollection services)
         {
+            services.AddTransient<IKeycloakExternal, KeycloakExternal>();
             return services;
         }
     }

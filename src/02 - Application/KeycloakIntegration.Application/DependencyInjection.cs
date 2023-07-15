@@ -1,23 +1,27 @@
 ﻿using FluentValidation;
+using KeycloakIntegration.Application.Behaviors;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace KeycloakIntegration.Application
+namespace KeycloakIntegration.Application;
+
+public static class DependencyInjection
 {
-    public static class DependencyInjection
+    public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        public static IServiceCollection AddApplication(this IServiceCollection services)
+        var assembly = typeof(DependencyInjection).Assembly;
+
+        services.AddMediatR(configuration =>
         {
-            var assembly = typeof(DependencyInjection).Assembly;
+            configuration.RegisterServicesFromAssembly(assembly);
+        });
 
-            services.AddMediatR(configuration =>
-            {
-                configuration.RegisterServicesFromAssembly(assembly);
-            });
+        services.AddValidatorsFromAssembly(assembly);
 
+        services.AddAutoMapper(assembly);
 
-            services.AddValidatorsFromAssembly(assembly);
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
-            return services;
-        }
+        return services;
     }
 }
