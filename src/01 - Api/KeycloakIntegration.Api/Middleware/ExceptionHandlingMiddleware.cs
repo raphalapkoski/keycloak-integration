@@ -1,6 +1,6 @@
-﻿using FluentResults;
-using KeycloakIntegration.Api.Common;
+﻿using KeycloakIntegration.Api.Common;
 using KeycloakIntegration.Api.Constants;
+using KeycloakIntegration.Application.Contracts.Error;
 using Newtonsoft.Json;
 using System.Net;
 
@@ -33,7 +33,7 @@ internal sealed class ExceptionHandlingMiddleware
 
     private static async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
     {
-        (HttpStatusCode httpStatusCode, IReadOnlyCollection<Error> errors) = GetHttpStatusCodeAndErrors(exception);
+        (HttpStatusCode httpStatusCode, IReadOnlyCollection<CustomError> errors) = GetHttpStatusCodeAndErrors(exception);
 
         httpContext.Response.ContentType = "application/json";
 
@@ -49,11 +49,11 @@ internal sealed class ExceptionHandlingMiddleware
         await httpContext.Response.WriteAsync(response);
     }
 
-    private static (HttpStatusCode HttpStatusCode, IReadOnlyCollection<Error> Errors) GetHttpStatusCodeAndErrors(Exception exception) =>
+    private static (HttpStatusCode HttpStatusCode, IReadOnlyCollection<CustomError> Errors) GetHttpStatusCodeAndErrors(Exception exception) =>
         exception switch
         {
-            FluentValidation.ValidationException validationException => (HttpStatusCode.BadRequest, validationException.Errors.Select(_ => new Error(_.ErrorMessage)).ToList()),
-            UnauthorizedAccessException unauthorizedAccessException => (HttpStatusCode.Unauthorized, new[] { new Error(exception.Message) }),
+            FluentValidation.ValidationException validationException => (HttpStatusCode.BadRequest, validationException.Errors.Select(_ => new CustomError(_.ErrorCode, _.ErrorMessage)).ToList()),
+            UnauthorizedAccessException unauthorizedAccessException => (HttpStatusCode.Unauthorized, new[] { new CustomError("Unauthorized", exception.Message) }),
             _ => (HttpStatusCode.InternalServerError, new[] { Errors.ServerError })
         };
 }

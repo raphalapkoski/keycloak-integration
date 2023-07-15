@@ -1,11 +1,13 @@
-﻿using FluentResults;
+﻿
+
+using KeycloakIntegration.Application.Contracts.Error;
 
 namespace KeycloakIntegration.Api.Common
 {
     public class ApiErrorResponse
     {
-        public ApiErrorResponse(IReadOnlyCollection<Error> errors) => Errors = errors;
+        public ApiErrorResponse(IReadOnlyCollection<CustomError> errors) => Errors = errors;
 
-        public IReadOnlyCollection<Error> Errors { get; }
+        public IReadOnlyCollection<CustomError> Errors { get; }
     }
 }

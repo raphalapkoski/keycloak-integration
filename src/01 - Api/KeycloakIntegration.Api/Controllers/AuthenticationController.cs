@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using FluentResults;
+using KeycloakIntegration.Api.Common;
 using KeycloakIntegration.Application.Contracts.Authentication;
 using KeycloakIntegration.Application.Core.Authentication;
 using MediatR;
@@ -24,8 +24,8 @@ public class AuthenticationController : ControllerBase
     [Consumes("application/json")]
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthenticationResponse))]
-    [ProducesResponseType(typeof(IReadOnlyCollection<Error>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(IReadOnlyCollection<Error>), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> PostAsync([FromBody] AuthenticationRequest request)
     {
         var response = await _sender.Send(_mapper.Map<AuthenticationCommand>(request));
