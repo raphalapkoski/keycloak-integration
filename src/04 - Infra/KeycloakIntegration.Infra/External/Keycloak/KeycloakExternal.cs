@@ -1,5 +1,5 @@
 ﻿using KeycloakIntegration.Domain.External.Keycloak;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace KeycloakIntegration.Infra.External.Keycloak;
 
@@ -26,6 +26,6 @@ internal class KeycloakExternal : IKeycloakExternal
         if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             throw new UnauthorizedAccessException();
 
-        return JsonConvert.DeserializeObject<KeycloakAuthenticationResponse>(await response.Content.ReadAsStringAsync());
+        return JsonSerializer.Deserialize<KeycloakAuthenticationResponse>(await response.Content.ReadAsStringAsync());
     }
 }
